@@ -18,7 +18,7 @@ ENTITY_DESCRIPTIONS = (
     ButtonEntityDescription(
         key="makebed",
         name="Make bed",
-        icon="mdi:bed",
+        icon="mdi:bed-empty",
     ),
 )
 
