@@ -32,12 +32,12 @@ ENTITY_DESCRIPTIONS = (
     ClimateEntityDescription(
         key="temp_left",
         name="Left",
-        icon="mdi:bed-single-outline",
+        icon="mdi:thermometer",
     ),
     ClimateEntityDescription(
         key="temp_right",
-        name="Right", 
-        icon="mdi:bed-single-outline",
+        name="Right",
+        icon="mdi:thermometer",
     ),
 )
 
