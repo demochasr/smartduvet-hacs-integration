@@ -11,5 +11,6 @@
   "after_dependencies": [],
   "version": "1.0.0",
   "integration_type": "device",
-  "quality_scale": "silver"
+  "quality_scale": "silver",
+  "loggers": ["smartduvet"]
 }

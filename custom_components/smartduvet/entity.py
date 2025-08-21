@@ -84,10 +84,9 @@ class SmartDuvetEntity(CoordinatorEntity[SmartDuvetDataUpdateCoordinator]):
         if mac_address:
             # Add MAC address as both connection identifier and hw_version
             device_info_dict["connections"] = {("mac", mac_address.lower().replace(":", ""))}
-            device_info_dict["hw_version"] = mac_address
         
         if sta_ip:
-            device_info_dict["configuration_url"] = f"http://{sta_ip}"
+            device_info_dict["configuration_url"] = f"http://{sta_ip}/api/info"
         
         return DeviceInfo(**device_info_dict)
 
