@@ -25,6 +25,7 @@ class SmartDuvetEntity(CoordinatorEntity[SmartDuvetDataUpdateCoordinator]):
     """SmartDuvetEntity class."""
 
     _attr_attribution = ATTRIBUTION
+    _attr_has_entity_name = True
 
     def __init__(
         self,
@@ -40,14 +41,15 @@ class SmartDuvetEntity(CoordinatorEntity[SmartDuvetDataUpdateCoordinator]):
         entry_id_short = coordinator.config_entry.entry_id.replace("-", "")[:8]
         self._attr_unique_id = f"{entry_id_short}_{entity_description.key}"
         
-        # Set entity name that will be used for entity_id generation
-        # This creates entity_ids like: button.devicename_makebed, climate.devicename_left
-        device_name = coordinator.config_entry.title or "SmartDuvet"
+        # Set entity name according to has_entity_name = True pattern
+        # Entity name should only identify the data point, not include device name
+        # Home Assistant will automatically combine device.name + entity.name for friendly_name
         if entity_description.name:
-            self._attr_name = f"{device_name} {entity_description.name}"
+            self._attr_name = entity_description.name
         else:
-            # For entities with empty names, use device name only
-            self._attr_name = device_name
+            # For main feature entities (like main light), use None 
+            # This will make the entity use only the device name
+            self._attr_name = None
         
         # Create device info using constants and proper data extraction
         self._attr_device_info = self._create_device_info(coordinator)

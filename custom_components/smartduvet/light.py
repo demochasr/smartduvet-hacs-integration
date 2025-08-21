@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 ENTITY_DESCRIPTIONS = (
     LightEntityDescription(
         key="light",
-        name="",
+        name=None,  # Main feature entity - uses device name only
         icon="mdi:lightbulb",
     ),
 )
