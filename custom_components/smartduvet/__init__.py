@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 from homeassistant.const import CONF_HOST, Platform
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.device_registry import async_get as async_get_device_registry
 from homeassistant.helpers.entity_registry import async_get as async_get_entity_registry
 from homeassistant.loader import async_get_loaded_integration
 
@@ -84,8 +85,9 @@ async def async_remove_entry(
     entry: SmartDuvetConfigEntry,
 ) -> None:
     """Handle removal of a config entry."""
-    # Explicitly remove all entities from the entity registry
+    # Get both registries
     entity_registry = async_get_entity_registry(hass)
+    device_registry = async_get_device_registry(hass)
     
     # Find all entities associated with this config entry
     entities_to_remove = [
@@ -94,15 +96,28 @@ async def async_remove_entry(
         if entity_entry.config_entry_id == entry.entry_id
     ]
     
+    # Find all devices associated with this config entry
+    devices_to_remove = [
+        device_entry.id
+        for device_entry in device_registry.devices.values()
+        if entry.entry_id in device_entry.config_entries
+    ]
+    
     # Remove each entity from the registry
     for entity_id in entities_to_remove:
         LOGGER.debug("Removing entity %s from registry", entity_id)
         entity_registry.async_remove(entity_id)
     
+    # Remove each device from the registry
+    for device_id in devices_to_remove:
+        LOGGER.debug("Removing device %s from registry", device_id)
+        device_registry.async_remove_device(device_id)
+    
     LOGGER.info(
-        "Removed SmartDuvet integration for device at %s (%d entities removed)", 
+        "Removed SmartDuvet integration for device at %s (%d entities, %d devices removed)", 
         entry.data.get(CONF_HOST, "unknown"),
-        len(entities_to_remove)
+        len(entities_to_remove),
+        len(devices_to_remove)
     )
 
 
