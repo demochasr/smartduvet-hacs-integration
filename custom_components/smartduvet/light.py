@@ -24,7 +24,7 @@ ENTITY_DESCRIPTIONS = (
     LightEntityDescription(
         key="light",
         name=None,  # Main feature entity - uses device name only
-        icon="mdi:lightbulb",
+        icon="mdi:bed",
     ),
 )
 
