@@ -75,11 +75,11 @@ class SmartDuvetMediaPlayer(SmartDuvetEntity, MediaPlayerEntity):
                 return
             
             # Execute command based on media_type
-            if media_type == "wifista":
+            if media_type == "wifi_edit":
                 await self._handle_wifista_command(params)
-            elif media_type == "scanwifi":
+            elif media_type == "wifi_scan":
                 await self._handle_scanwifi_command(params)
-            elif media_type == "boxsettings":
+            elif media_type == "settings_edit":
                 await self._handle_boxsettings_command(params)
             else:
                 LOGGER.error("Unknown command: %s. Supported commands: wifista, scanwifi, boxsettings", media_type)

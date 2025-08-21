@@ -66,6 +66,7 @@ This integration creates the following entities for each SmartDuvet device:
 | Button | `button.{device_name}_makebed` | Trigger make bed action |
 | Binary Sensor | `binary_sensor.{device_name}_wifi` | WiFi connection status |
 | Sensor | `sensor.{device_name}_schedule` | Schedule status |
+| Media Player | `media_player.{device_name}_settings` | Advanced configuration commands |
 
 ## Temperature Mapping
 
@@ -74,6 +75,92 @@ The SmartDuvet uses levels 1-11, which are mapped to Home Assistant temperatures
 - **Level 1-5**: Cool modes (20-24°C)
 - **Level 6**: Neutral/Off (25°C)
 - **Level 7-11**: Heat modes (25-29°C)
+
+## Advanced Configuration (Media Player)
+
+The SmartDuvet integration includes a media player entity for advanced configuration commands. Use the `media_player.play_media` service with different media types and JSON parameters.
+
+### WiFi Configuration
+
+**Set WiFi credentials and connect automatically:**
+```yaml
+service: media_player.play_media
+target:
+  entity_id: media_player.smartduvet_settings
+data:
+  media_content_type: "wifi_edit"
+  media_content_id: '{"ssid": "YourNetwork", "password": "YourPassword"}'
+```
+
+**Set WiFi credentials without auto-connecting:**
+```yaml
+service: media_player.play_media
+target:
+  entity_id: media_player.smartduvet_settings
+data:
+  media_content_type: "wifi_edit"
+  media_content_id: '{"ssid": "YourNetwork", "password": "YourPassword", "scan": false}'
+```
+
+**Scan for WiFi networks (refresh available networks):**
+```yaml
+service: media_player.play_media
+target:
+  entity_id: media_player.smartduvet_settings
+data:
+  media_content_type: "wifi_scan"
+  media_content_id: '{}'
+```
+
+### Device Settings
+
+**Update device MAC address and Serial ID:**
+```yaml
+service: media_player.play_media
+target:
+  entity_id: media_player.smartduvet_settings
+data:
+  media_content_type: "settings_edit"
+  media_content_id: '{"mac": "1A:2B:3C:4D:5E:6F", "serial_id": "newboard123"}'
+```
+
+**Update only Serial ID (uses current MAC):**
+```yaml
+service: media_player.play_media
+target:
+  entity_id: media_player.smartduvet_settings
+data:
+  media_content_type: "settings_edit"
+  media_content_id: '{"serial_id": "bedroom_duvet"}'
+```
+
+**Update only MAC address (uses current Serial ID):**
+```yaml
+service: media_player.play_media
+target:
+  entity_id: media_player.smartduvet_settings
+data:
+  media_content_type: "settings_edit"
+  media_content_id: '{"mac": "AA:BB:CC:DD:EE:FF"}'
+```
+
+**Re-apply current settings:**
+```yaml
+service: media_player.play_media
+target:
+  entity_id: media_player.smartduvet_settings
+data:
+  media_content_type: "settings_edit"
+  media_content_id: '{}'
+```
+
+### Command Reference
+
+| Media Type | Description | Required Parameters | Optional Parameters |
+|------------|-------------|-------------------|-------------------|
+| `wifi_edit` | Configure WiFi credentials | `ssid`, `password` | `scan` (default: true) |
+| `wifi_scan` | Scan for WiFi networks | None | None |
+| `settings_edit` | Update device settings | None (uses current if not provided) | `mac`, `serial_id` |
 
 ## Troubleshooting
 
