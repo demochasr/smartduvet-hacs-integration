@@ -14,6 +14,7 @@ from .const import (
     DEVICE_INFO_MAC,
     DEVICE_INFO_WIFI_VERSION,
     DOMAIN,
+    LOGGER,
     MANUFACTURER,
     MODEL,
 )
@@ -40,13 +41,13 @@ class SmartDuvetEntity(CoordinatorEntity[SmartDuvetDataUpdateCoordinator]):
         self._attr_unique_id = f"{entry_id_short}_{entity_description.key}"
         
         # Set entity name that will be used for entity_id generation
-        # This allows HA to create entity_ids like: button.master_bedroom_smartduvet_makebed
+        # This creates entity_ids like: button.devicename_makebed, climate.devicename_left
+        device_name = coordinator.config_entry.title or "SmartDuvet"
         if entity_description.name:
-            self._attr_name = entity_description.name
+            self._attr_name = f"{device_name} {entity_description.name}"
         else:
-            # For entities with empty names, use None to let HA use device name only
-            self._attr_name = None
-            # Home Assistant will automatically generate entity_id from device name only
+            # For entities with empty names, use device name only
+            self._attr_name = device_name
         
         # Create device info using constants and proper data extraction
         self._attr_device_info = self._create_device_info(coordinator)
@@ -118,3 +119,10 @@ class SmartDuvetEntity(CoordinatorEntity[SmartDuvetDataUpdateCoordinator]):
             attributes["wifi_version"] = wifi_version
         
         return attributes if attributes else None
+
+    async def async_will_remove_from_hass(self) -> None:
+        """Entity being removed from hass."""
+        # This method is called when the entity is being removed from Home Assistant
+        # This ensures proper cleanup from entity registry when integration is removed
+        LOGGER.debug("Entity %s is being removed from Home Assistant", self.entity_id)
+        await super().async_will_remove_from_hass()

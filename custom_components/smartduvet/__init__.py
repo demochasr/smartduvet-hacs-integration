@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 from homeassistant.const import CONF_HOST, Platform
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.entity_registry import async_get as async_get_entity_registry
 from homeassistant.loader import async_get_loaded_integration
 
 from .api import SmartDuvetApiClient
@@ -79,13 +80,30 @@ async def async_unload_entry(
 
 
 async def async_remove_entry(
-    hass: HomeAssistant,  # noqa: ARG001
+    hass: HomeAssistant,
     entry: SmartDuvetConfigEntry,
 ) -> None:
     """Handle removal of a config entry."""
-    # Home Assistant automatically removes entities from the registry when a config entry is removed.
-    # This function can be used for additional cleanup if needed (e.g., removing files, cleaning up external resources).
-    LOGGER.info("SmartDuvet integration removed for device at %s", entry.data.get(CONF_HOST, "unknown"))
+    # Explicitly remove all entities from the entity registry
+    entity_registry = async_get_entity_registry(hass)
+    
+    # Find all entities associated with this config entry
+    entities_to_remove = [
+        entity_entry.entity_id
+        for entity_entry in entity_registry.entities.values()
+        if entity_entry.config_entry_id == entry.entry_id
+    ]
+    
+    # Remove each entity from the registry
+    for entity_id in entities_to_remove:
+        LOGGER.debug("Removing entity %s from registry", entity_id)
+        entity_registry.async_remove(entity_id)
+    
+    LOGGER.info(
+        "Removed SmartDuvet integration for device at %s (%d entities removed)", 
+        entry.data.get(CONF_HOST, "unknown"),
+        len(entities_to_remove)
+    )
 
 
 async def async_reload_entry(
