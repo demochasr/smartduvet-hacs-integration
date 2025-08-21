@@ -40,18 +40,17 @@ class SmartDuvetEntity(CoordinatorEntity[SmartDuvetDataUpdateCoordinator]):
         entry_id_short = coordinator.config_entry.entry_id.replace("-", "")[:8]
         self._attr_unique_id = f"{entry_id_short}_{entity_description.key}"
         
-        # Create device info first
-        self._attr_device_info = self._create_device_info(coordinator)
-        
         # Set entity name that will be used for entity_id generation
-        # Use the actual device name from device info, not config entry title
-        device_name = self._attr_device_info["name"]
-        
+        # This creates entity_ids like: button.devicename_makebed, climate.devicename_left
+        device_name = coordinator.config_entry.title or "SmartDuvet"
         if entity_description.name:
             self._attr_name = f"{device_name} {entity_description.name}"
         else:
             # For entities with empty names, use device name only
             self._attr_name = device_name
+        
+        # Create device info using constants and proper data extraction
+        self._attr_device_info = self._create_device_info(coordinator)
 
     def _create_device_info(self, coordinator: SmartDuvetDataUpdateCoordinator) -> DeviceInfo:
         """Create device info for the SmartDuvet device."""
@@ -70,20 +69,10 @@ class SmartDuvetEntity(CoordinatorEntity[SmartDuvetDataUpdateCoordinator]):
         if mac_address:
             identifiers.add((DOMAIN, mac_address))
         
-        # Generate a meaningful device name based on available information
-        device_name = "SmartDuvet"
-        if mac_address:
-            # Use last 6 characters of MAC for unique naming like "SmartDuvet A1B2C3"
-            mac_suffix = mac_address.replace(":", "")[-6:].upper()
-            device_name = f"SmartDuvet {mac_suffix}"
-        elif sta_ip:
-            # Fallback to IP if no MAC available
-            device_name = f"SmartDuvet {sta_ip}"
-        
         # Build device info dictionary
         device_info_dict = {
             "identifiers": identifiers,
-            "name": device_name,
+            "name": coordinator.config_entry.title or "SmartDuvet",
             "manufacturer": MANUFACTURER,
             "model": MODEL,
             "sw_version": wifi_version,
