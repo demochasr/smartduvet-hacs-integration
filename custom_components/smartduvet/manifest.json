@@ -1,0 +1,15 @@
+{
+  "domain": "smartduvet",
+  "name": "SmartDuvet",
+  "codeowners": ["@smartduvet-integration"],
+  "config_flow": true,
+  "documentation": "https://github.com/smartduvet-ha-integration/smartduvet",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/smartduvet-ha-integration/smartduvet/issues",
+  "requirements": [],
+  "dependencies": [],
+  "after_dependencies": [],
+  "version": "1.0.0",
+  "integration_type": "device",
+  "quality_scale": "silver"
+}
