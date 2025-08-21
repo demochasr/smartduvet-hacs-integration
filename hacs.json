@@ -1,5 +1,5 @@
 {
-    "name": "YESLI TI VIDISH ETO TO TVOYEMU HA PIZDA",
-    "homeassistant": "2025.2.4",
-    "hacs": "2.0.5"
+    "name": "SmartDuvet",
+    "content_in_root": false,
+    "homeassistant": "2024.1.0"
 }
